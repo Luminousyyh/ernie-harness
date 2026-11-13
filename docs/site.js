@@ -68,3 +68,107 @@ $$('[data-copy]').forEach(button => {
     }
   });
 });
+
+
+// One observer reveals each block once; layout and native scrolling stay intact.
+function initScrollReveal() {
+  const targets = $$('[data-reveal]');
+  if (!targets.length) return;
+  const pending = new Set();
+  let observer;
+  let motion;
+  let detach = () => {};
+  const instant = element => {
+    element.classList.add('reveal-instant', 'is-revealed');
+    element.classList.remove('reveal-pending', 'reveal-active');
+    pending.delete(element);
+  };
+  const exposeAll = () => {
+    targets.forEach(instant);
+    try { observer?.disconnect(); } catch { /* Content is already visible. */ }
+    detach();
+  };
+  const reveal = (element, immediately = false) => {
+    if (immediately) instant(element);
+    else {
+      element.classList.remove('reveal-pending');
+      element.classList.add('is-revealed');
+      pending.delete(element);
+    }
+    observer?.unobserve(element);
+  };
+  const exposeRegion = element => {
+    if (!(element instanceof Element)) return;
+    // Focus can enter a control before the observer has delivered its callback.
+    const enclosing = element.closest('[data-reveal]');
+    if (enclosing) reveal(enclosing, true);
+    element.querySelectorAll('[data-reveal]').forEach(target => reveal(target, true));
+  };
+  const exposeHash = hash => {
+    if (!hash || hash === '#') return;
+    try { exposeRegion(document.getElementById(decodeURIComponent(hash.slice(1)))); } catch { exposeAll(); }
+  };
+  try {
+    motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches || typeof IntersectionObserver !== 'function') { exposeAll(); return; }
+    observer = new IntersectionObserver(entries => {
+      try {
+        for (const entry of entries) if (entry.isIntersecting && entry.intersectionRatio >= .08) reveal(entry.target);
+      } catch { exposeAll(); }
+    }, {rootMargin: '0px 0px -48px 0px', threshold: .08});
+    const onFocus = event => {
+      try {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const enclosing = target.closest('[data-reveal]');
+        // Pointer focus must not move a visible button between down and up.
+        if (pending.has(enclosing) || target.matches(':focus-visible')) exposeRegion(target);
+      } catch { exposeAll(); }
+    };
+    const onHash = () => exposeHash(window.location.hash);
+    const onClick = event => {
+      const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (!anchor) return;
+      try {
+        const url = new URL(anchor.href, document.baseURI);
+        if (url.origin === window.location.origin && url.pathname === window.location.pathname) exposeHash(url.hash);
+      } catch { exposeAll(); }
+    };
+    const onPageShow = () => {
+      try {
+        onHash();
+        for (const target of pending) if (target.getBoundingClientRect().top < innerHeight) reveal(target, true);
+      } catch { exposeAll(); }
+    };
+    const onMotion = event => { if (event.matches) exposeAll(); };
+    const onTransition = event => {
+      if (event.propertyName === 'opacity' && event.target instanceof Element && event.target.matches('[data-reveal].is-revealed')) {
+        event.target.classList.remove('reveal-active');
+      }
+    };
+    detach = () => {
+      document.removeEventListener('focusin', onFocus);
+      document.removeEventListener('click', onClick);
+      document.removeEventListener('transitionend', onTransition);
+      window.removeEventListener('hashchange', onHash);
+      window.removeEventListener('pageshow', onPageShow);
+      motion.removeEventListener('change', onMotion);
+    };
+    document.addEventListener('focusin', onFocus);
+    document.addEventListener('click', onClick);
+    document.addEventListener('transitionend', onTransition);
+    window.addEventListener('hashchange', onHash);
+    window.addEventListener('pageshow', onPageShow);
+    motion.addEventListener('change', onMotion);
+    for (const target of targets) {
+      if (target.getBoundingClientRect().top < innerHeight) instant(target);
+      else {
+        target.classList.add('reveal-active', 'reveal-pending');
+        pending.add(target);
+        observer.observe(target);
+      }
+    }
+    onHash();
+  } catch { exposeAll(); }
+}
+initScrollReveal();
