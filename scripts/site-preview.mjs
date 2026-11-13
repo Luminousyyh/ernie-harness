@@ -10,7 +10,7 @@ export async function startSiteServer({port=0}={}) {
       if (!['GET','HEAD'].includes(request.method)) { response.writeHead(405).end(); return; }
       let path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
       if (path.startsWith('/ernie-harness/')) path = path.slice('/ernie-harness'.length);
-      if (path === '/') path = '/index.html';
+      if (path.endsWith('/')) path += 'index.html';
       const target = await realpath(resolve(root, '.'+path));
       if (!target.startsWith(root.endsWith(sep) ? root : root+sep) || !(await stat(target)).isFile()) { response.writeHead(404).end(); return; }
       const data = await readFile(target);

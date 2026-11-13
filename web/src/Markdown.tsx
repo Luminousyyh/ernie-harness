@@ -1,3 +1,4 @@
+import {useLocale} from './Locale.js';
 import { createElement, type ReactNode } from 'react';
 import { CopyButton } from './components.js';
 import { safeHref } from './state.js';
@@ -26,6 +27,8 @@ function inline(text: string, prefix = ''): ReactNode[] {
   return result;
 }
 export function Markdown({text}: {text: string}) {
+  const {t, locale, number, date} = useLocale();
+
   const lines = text.replace(/\r\n/g, '\n').split('\n');
   const blocks: ReactNode[] = [];
   let i = 0;
@@ -38,7 +41,7 @@ export function Markdown({text}: {text: string}) {
       const code: string[] = []; i++;
       while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) code.push(lines[i++]);
       if (i < lines.length) i++;
-      blocks.push(<div className="code-block" key={key}><div className="code-header"><span>{fence[1].trim() || '代码'}</span><CopyButton text={code.join('\n')} /></div><pre><code>{code.join('\n')}</code></pre></div>); continue;
+      blocks.push(<div className="code-block" key={key}><div className="code-header"><span>{fence[1].trim() || t("代码")}</span><CopyButton text={code.join('\n')} /></div><pre><code>{code.join('\n')}</code></pre></div>); continue;
     }
     const heading = /^(#{1,6})\s+(.+)$/.exec(line);
     if (heading) {blocks.push(createElement(`h${Math.min(heading[1].length + 1, 6)}`, {key}, inline(heading[2], key))); i++; continue;}

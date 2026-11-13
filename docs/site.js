@@ -1,3 +1,4 @@
+const english = document.documentElement.lang === 'en';
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
 function wireTabs(selector) {
@@ -30,7 +31,7 @@ const menuButton = $('.mobile-toggle');
 const mobileNav = $('#mobile-nav');
 const setMenu = open => {
   menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? '收起导航' : '展开导航');
+  menuButton.setAttribute('aria-label', open ? (english ? 'Close navigation' : '收起导航') : (english ? 'Open navigation' : '展开导航'));
   mobileNav.hidden = !open;
   $('use', menuButton).setAttribute('href', open ? '#i-close' : '#i-menu');
 };
@@ -57,14 +58,14 @@ $$('[data-copy]').forEach(button => {
     if (!source) return;
     try {
       await navigator.clipboard.writeText(source.textContent.trim());
-      notify('安装命令已复制');
+      notify(english ? 'Installation commands copied' : '安装命令已复制');
     } catch {
       const range = document.createRange();
       range.selectNodeContents(source);
       const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
-      notify('已选中命令，请手动复制');
+      notify(english ? 'Commands selected; copy them manually' : '已选中命令，请手动复制');
     }
   });
 });
@@ -172,3 +173,14 @@ function initScrollReveal() {
   } catch { exposeAll(); }
 }
 initScrollReveal();
+
+// Retain the current section when moving between real static language pages.
+const languageLink = $('.language-switch');
+function syncLanguageAnchor() {
+  if (!languageLink) return;
+  const destination = languageLink.getAttribute('href').split('#')[0];
+  languageLink.setAttribute('href', destination + (location.hash || '#main'));
+}
+syncLanguageAnchor();
+window.addEventListener('hashchange', syncLanguageAnchor);
+languageLink?.addEventListener('click', syncLanguageAnchor);

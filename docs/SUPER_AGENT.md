@@ -21,3 +21,18 @@ DeepSeek Harness 的可替换服务与会话事件组织、DSH Super-Agent 的�
 ## 验证证据
 
 自动化故障场景使用注入的模型/工具，证明调度器的状态语义，不代表线上模型效果。真实模型记录、Linux 验证与正式任务结果分别报告；冒烟任务通过不能替代24任务、3 Harness、2重复的正式比较。
+
+## DSH Super-Agent mechanism mapping (2026-11-13)
+
+The primary Super-Agent reference is `dsh-superagent`, inspected in the local source checkout at commit `6337fc823ce20251c8de8085948165c81aaa701e` (local changes are not claimed as that upstream commit). The original experiment reference remains `deepseek-ai/dsh-superagent-prototype@8c32a9dc5d72c033816c6a8110b37f40cf94fba4`.
+
+| DSH concept | ERNIE implementation |
+| --- | --- |
+| Mandate | Explicit start grants a revision-bound mandate; user pause/cancel withdraws automatic inputs. |
+| Trigger / durable effect | Queued messages, dependency readiness and quota wakes are persisted before dispatch. |
+| Post-commit dispatcher | `DshCoordinator.dispatch` atomically settles a wake and queues the goal; a timer only wakes the dispatcher. |
+| Assessment | Each worker completion records status, goal revision and independent evidence count. Model claims remain separate. |
+| Assignment | Child goals retain parent, isolated workspace and review state; acceptance never silently merges source changes. |
+| Recovery / stopping | Pending tool effects require reconciliation; paused/cancelled/failed mandates do not receive automatic retries. |
+
+`GET /api/supervisor` exposes wakes, assessments, assignments and active workers. `POST /api/assignments/:id/review` records explicit acceptance/rejection with a note. Default concurrency remains one; the scheduler supports two disjoint canonical workspaces when explicitly configured. Both share model allowance. No social connector or autonomous messaging to third parties is enabled by these mechanisms.

@@ -1,3 +1,4 @@
+import {DshCoordinator} from './dsh-coordinator.js';
 import {realpathSync} from 'node:fs';
 import {initialMessages} from '../core/context.js';
 import {StateError} from '../store/sqlite.js';
@@ -16,13 +17,18 @@ export class Supervisor implements GoalScheduler {
   private snapshots = new Set<string>();
   private pumping = false;
   private stopping = false;
+  readonly coordinator:DshCoordinator;
+  private wakeTimer:ReturnType<typeof setInterval>;
 
   constructor(
     private store: SqliteStore,
     private bus: EventBus,
     private engine: AgentEngine,
     private tools: ToolRegistry,
-  ) {}
+    private options:{maxWorkers?:1|2;stateDir?:string}={},
+  ) {this.coordinator=new DshCoordinator(store);this.wakeTimer=setInterval(()=>{if(!this.stopping&&this.coordinator.dispatch().length)this.schedulePump();},1000);this.wakeTimer.unref();}
+
+  status(){return{...this.coordinator.status(),maxWorkers:this.options.maxWorkers??1,active:[...this.active.keys()]};}
 
   async start(id: string): Promise<void> {
     const goal = this.require(id);
@@ -33,6 +39,7 @@ export class Supervisor implements GoalScheduler {
       throw new Error('请先核对未完成操作');
     }
     if (this.active.has(id)) return;
+    this.coordinator.grant(id);
     this.store.enqueue(id);
     this.publishUpdate(id, {status: 'pending', error: undefined});
     this.schedulePump();
@@ -58,6 +65,7 @@ export class Supervisor implements GoalScheduler {
     for (const id of new Set(this.store.queued())) {
       try {
         const goal = this.require(id);
+        if(this.active.has(id)||[...this.active.values()].some(run=>this.workspaceKey(run.workspace)===this.workspaceKey(goal.workspace)))continue;
         if(this.snapshots.has(this.workspaceKey(goal.workspace)))continue;
         if (goal.status !== 'pending' && goal.status !== 'waiting-input') {
           this.store.settleQueue(id);
@@ -101,7 +109,7 @@ export class Supervisor implements GoalScheduler {
     this.pumping = true;
     try {
       // Await every run, including its cleanup: only one model and workspace writer.
-      while (!this.stopping && !this.active.size) {
+      while (!this.stopping && this.active.size<(this.options.maxWorkers??1)) {
         const next = this.nextReady();
         if (!next) return;
         const {id, workspace} = next;
@@ -112,9 +120,11 @@ export class Supervisor implements GoalScheduler {
           .finally(() => {
             this.active.delete(id);
             this.store.settleQueue(id);
+            const goal=this.store.getGoal(id);if(goal){this.coordinator.assess(goal);if(goal.status==='waiting-rate-limit'){const failure=this.store.events(0,id).findLast(event=>event.type==='run.failed');const retry=(failure?.data as {retryAfterMs?:number}|undefined)?.retryAfterMs;this.coordinator.schedule(id,Date.now()+Math.max(60000,retry??60000),'quota');}}
+            this.schedulePump();
           });
         this.active.set(id, {controller, promise, workspace});
-        await promise;
+        if((this.options.maxWorkers??1)===1)await promise;
       }
     } finally {
       this.pumping = false;
@@ -139,6 +149,7 @@ export class Supervisor implements GoalScheduler {
   }
 
   async pause(id: string): Promise<void> {
+    this.coordinator.revoke(id,'user-paused');
     const goal = this.require(id);
     if (goal.status === 'cancelled' || goal.status === 'succeeded') {
       throw new Error('Terminal goal cannot pause');
@@ -156,6 +167,7 @@ export class Supervisor implements GoalScheduler {
   }
 
   async cancel(id: string): Promise<void> {
+    this.coordinator.revoke(id,'user-cancelled');
     this.require(id);
     this.store.settleQueue(id);
     this.publishUpdate(id, {status: 'cancelled'});
@@ -191,6 +203,7 @@ export class Supervisor implements GoalScheduler {
   }
 
   async shutdown(): Promise<void> {
+    clearInterval(this.wakeTimer);
     this.stopping = true;
     for (const id of [...this.active.keys()]) await this.pause(id);
   }

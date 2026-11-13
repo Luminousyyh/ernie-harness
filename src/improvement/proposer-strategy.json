@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "maxFiles": 6,
+  "maxTraceChars": 24000,
+  "reflection": true,
+  "sourceOrder": "failures-first",
+  "instructions": "Use archived development failures and paired outcomes to propose one small source change. Explain a testable mechanism in the summary. Prefer changing a related module combination when failures require coordination. The proposer strategy itself may be edited, and its validated instructions, evidence window and reflection switch govern the next improvement cycle."
+}

@@ -1,0 +1,47 @@
+name: Offline checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    name: Offline / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.13.1'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - name: Check generated bilingual pages
+        run: node scripts/site-build.mjs --check
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Bilingual website and accessibility checks
+        run: node scripts/site-qa.mjs
+      - name: Create local package archive (no publishing)
+        run: pnpm pack --pack-destination artifacts/package
+      - name: Check package metadata and runtime exclusions
+        run: node scripts/site-package-check.mjs
+      - name: Retain website evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-qa-${{ matrix.os }}
+          path: artifacts/site-qa/
+          if-no-files-found: ignore
+          retention-days: 7

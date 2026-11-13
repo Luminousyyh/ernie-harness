@@ -1,3 +1,4 @@
+import type {Locale} from '../../src/i18n/index.js';
 import type { ChatMessage, HarnessEvent } from '../../src/contracts/index.js';
 
 export interface ThreadState {
@@ -55,6 +56,6 @@ export const statusLabels: Record<string, string> = {
   pending: '待启动', running: '执行中', 'waiting-rate-limit': '等待额度恢复', 'waiting-input': '等待输入', paused: '已暂停', 'needs-reconciliation': '待人工核对', succeeded: '已完成', failed: '执行失败', cancelled: '已取消',
 };
 export function basename(path: string): string { return path.replace(/[\\/]+$/, '').split(/[\\/]/).pop() || path; }
-export function formatNumber(value?: number): string { return typeof value === 'number' ? new Intl.NumberFormat('zh-CN', {notation: value >= 10000 ? 'compact' : 'standard', maximumFractionDigits: 1}).format(value) : '—'; }
-export function formatTime(value: string): string { const date = new Date(value); return Number.isNaN(date.getTime()) ? '—' : date.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit', second: '2-digit'}); }
+export function formatNumber(value?: number, locale: Locale = 'zh-CN'): string { return typeof value === 'number' ? new Intl.NumberFormat(locale, {notation: value >= 10000 ? 'compact' : 'standard', maximumFractionDigits: 1}).format(value) : '—'; }
+export function formatTime(value: string, locale: Locale = 'zh-CN'): string { const date = new Date(value); return Number.isNaN(date.getTime()) ? '—' : date.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit', second: '2-digit'}); }
 export function errorMessage(error: unknown): string { return error instanceof Error ? error.message : '请求未完成，请重试。'; }

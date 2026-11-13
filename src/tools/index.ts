@@ -55,7 +55,7 @@ export class ProjectTools implements ToolRegistry {
         const start = (args.startLine as number | undefined) ?? 1;
         const count = (args.lineCount as number | undefined) ?? 10000;
         const lines = text.split('\n');
-        const bounded = clip(lines.slice(start - 1, start - 1 + count).join('\n'));
+        const bounded = clip(lines.slice(start - 1, start - 1 + count).map((line,index)=>`${start+index} | ${line}`).join('\n'));
         return { ok: true, ...bounded, truncated: bounded.truncated || (args.lineCount === undefined && lines.length > start - 1 + count) };
       }
       case 'write_file': {
@@ -66,11 +66,11 @@ export class ProjectTools implements ToolRegistry {
         const text = await readText(root, input, context.signal);
         const oldText = args.oldText as string;
         const position = text.indexOf(oldText);
-        if (position < 0) throw new Error('oldText was not found; file was left unchanged');
-        if (text.indexOf(oldText, position + 1) !== -1) throw new Error('oldText must match exactly once; file was left unchanged');
+        if (position < 0) throw new Error('EDIT_NOT_FOUND: oldText was not found; file was left unchanged. Read the current file and retry with exact text.');
+        if (text.indexOf(oldText, position + 1) !== -1) throw new Error('EDIT_AMBIGUOUS: oldText must match exactly once; file was left unchanged. Include surrounding lines to identify one match.');
         const next = text.slice(0, position) + (args.newText as string) + text.slice(position + oldText.length);
         const artifact = await writeText(root, input, next, context.signal);
-        return { ok: true, output: `Edited ${artifact}`, artifacts: [artifact] };
+        const changedLine=text.slice(0,position).split('\n').length;const preview=next.split('\n').slice(Math.max(0,changedLine-2),changedLine+5).map((line,index)=>`${Math.max(1,changedLine-1)+index} | ${line}`).join('\n');return { ok: true, output: `Edited ${artifact}\n${preview}`, artifacts: [artifact] };
       }
       case 'search': return search(root, args.pattern as string, input, args.glob as string | undefined, context, this.processes);
       case 'shell':

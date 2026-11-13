@@ -1,3 +1,4 @@
+import {LocaleProvider} from '../web/src/Locale.js';
 import {createElement} from 'react';
 import {describe, expect, it} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
@@ -9,13 +10,13 @@ describe('model and supervisor evidence', () => {
   it('uses current request input rather than cumulative tokens and labels estimates', () => {
     const current = {...goal as object, context:{effectiveLimit:60000,requestInputTokens:12000,estimatedInputTokens:14000,remainingTokens:40000,responseReserve:8000,estimated:true,source:'request-estimate',compressionCount:2}} as never;
     expect(contextSnapshot(current)).toMatchObject({limit:60000,used:12000,remaining:40000});
-    const html=renderToStaticMarkup(ModelContext({goal:current,capabilities:null}));
+    const html=renderToStaticMarkup(createElement(LocaleProvider, {children:createElement(ModelContext, {goal:current,capabilities:null})}));
     expect(html).toContain('估算'); expect(html).toContain('12,000');
   });
   it('renders unavailable metadata as unverified high only and pending comparisons distinctly', () => {
-    const html = renderToStaticMarkup(ModelContext({goal,capabilities:null}));
+    const html = renderToStaticMarkup(createElement(LocaleProvider, {children:createElement(ModelContext, {goal,capabilities:null})}));
     expect(html).toContain('high'); expect(html).toContain('未返回'); expect(html).not.toContain('999,999');
-    const evidence=renderToStaticMarkup(ModelEvidence());
+    const evidence=renderToStaticMarkup(createElement(LocaleProvider,{children:createElement(ModelEvidence)}));
     expect(evidence).toContain('真实 smoke'); expect(evidence).toContain('144'); expect(evidence).toContain('独立比较'); expect(evidence).toContain('以实验页为准');
   });
   it('shows only persisted checkpoints and child relationships, without invented success', () => {
@@ -32,13 +33,13 @@ describe('model and supervisor evidence', () => {
   });
 
   it('does not equate the configured high effort with a live-success record', () => {
-    const html=renderToStaticMarkup(ModelContext({capabilities:{reasoning:{selected:'high',advertised:[],verified:[],reason:'No live-success record supplied.'}}}));
+    const html=renderToStaticMarkup(createElement(LocaleProvider, {children:createElement(ModelContext, {capabilities:{reasoning:{selected:'high',advertised:[],verified:[],reason:'No live-success record supplied.'}}})}));
     expect(html).toContain('当前配置'); expect(html).toContain('未提供实测成功记录');
     expect(html).not.toContain('唯一支持档位');
   });
 
   it('uses a Chinese capability explanation when the service returns English provenance', () => {
-    const html=renderToStaticMarkup(ModelContext({capabilities:{status:'unavailable',reasoning:{selected:'high',verified:[],reason:'The current free route could not be confirmed; no live-success record was supplied.'}}}));
+    const html=renderToStaticMarkup(createElement(LocaleProvider, {children:createElement(ModelContext, {capabilities:{status:'unavailable',reasoning:{selected:'high',verified:[],reason:'The current free route could not be confirmed; no live-success record was supplied.'}}})}));
     expect(html).toContain('免费路由'); expect(html).not.toContain('The current free route');
   });
 

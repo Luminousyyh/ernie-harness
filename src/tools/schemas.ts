@@ -9,7 +9,7 @@ function tool(name: string, description: string, properties: Record<string, unkn
 }
 export const DEFINITIONS: ToolDefinition[] = [
   tool('list_files', 'List immediate visible entries; directories end in / and safe symlinks in @.', { path: filePath }),
-  tool('read_file', 'Read UTF-8 text, with one-based line selection; output is capped at 32 KiB.', { path: filePath, startLine: { type: 'integer', minimum: 1, maximum: 10000000 }, lineCount: { type: 'integer', minimum: 1, maximum: 10000 } }, ['path']),
+  tool('read_file', 'Read UTF-8 text with visible line numbers. Do not include the line-number prefix in edit_file.oldText. Supports one-based line selection; output is capped at 32 KiB.', { path: filePath, startLine: { type: 'integer', minimum: 1, maximum: 10000000 }, lineCount: { type: 'integer', minimum: 1, maximum: 10000 } }, ['path']),
   tool('search', 'Find literal text recursively with line numbers. Skips secret files, .git, node_modules and symlinks. Glob supports *, **, and ?.', { pattern: string('Literal text to find', { minLength: 1, maxLength: 4096 }), path: filePath, glob: string('Optional glob matched against relative paths or basenames', { minLength: 1, maxLength: 1024 }) }, ['pattern']),
   tool('write_file', 'Atomically create or replace a UTF-8 file, creating parent directories. Maximum content 8 MiB.', { path: filePath, content: string('Complete new file contents', { maxLength: 8388608 }) }, ['path', 'content']),
   tool('edit_file', 'Replace exactly one occurrence of oldText. Rejects absent or ambiguous matches, including overlapping matches.', { path: filePath, oldText: string('Nonempty exact text', { minLength: 1, maxLength: 8388608 }), newText: string('Replacement text', { maxLength: 8388608 }) }, ['path', 'oldText', 'newText']),

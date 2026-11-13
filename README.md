@@ -1,85 +1,136 @@
-# ERNIE Harness
+<div align="center">
+  <img src="docs/site-assets/harness-mark.svg" width="88" height="88" alt="ERNIE Harness original bracket and loop mark">
+  <h1>ERNIE Harness</h1>
+  <p><strong>One coding core. Terminal, Web, and persistent goals.</strong></p>
+  <p>An independent TypeScript workspace built around ERNIE 5.5 Flash Preview.</p>
+  <p><a href="README.zh-CN.md">简体中文</a> · <a href="https://luminousyyh.github.io/ernie-harness/en/">Website &amp; docs</a> · <a href="docs/user/guide.md">Usage guide</a> · <a href="docs/maturity.md">Evidence &amp; status</a></p>
+  <p><a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue"></a> <img alt="Runtime: Node.js 24.9 or later" src="https://img.shields.io/badge/Node.js-%E2%89%A524.9-43853d"> <img alt="Package manager: pnpm 10.30.3" src="https://img.shields.io/badge/pnpm-10.30.3-f69220"></p>
+</div>
 
-[项目网站](https://luminousyyh.github.io/ernie-harness/) · [MIT 许可证](LICENSE) · [设计与来源](docs/THIRD_PARTY.md)
+Read a repository, make a change, run an acceptance check, and keep the evidence with the goal. CLI, terminal UI, and the local Web workspace share an execution engine, a SQLite journal, and cumulative budgets. The application defaults to Chinese; the documentation site has complete Chinese and English pages.
 
-面向 ERNIE 5.5 Flash Preview 的编程工作台：终端、Web 和后台目标共用同一执行内核。
+**Status: integration and validation.** Learning, extensions, and isolated improvement mechanisms are under active integration. Local checks, live model smoke tests, and formal comparison results are separate evidence. The current version is **not declared mature**. Live learning/improvement validation and the formal comparison are **pending, not completed**. See [maturity gates](docs/maturity.md) before drawing a performance conclusion.
 
-独立研究与开发项目，与百度、DeepSeek、Pi 或 Anthropic 无隶属关系，也未获得其官方背书。上游参考来源和许可证见 [第三方说明](docs/THIRD_PARTY.md)。
+![Illustrative ERNIE Harness workspace; not a live screenshot or evaluation result](docs/site-assets/workbench-demo.svg)
 
-## 启动
+*Authored interface illustration. [Explore the interactive static demo](https://luminousyyh.github.io/ernie-harness/en/#experience). It uses illustrative data and makes no model calls. Actual product recordings are pending review and recording.*
 
-需要 Node.js 24.9+、pnpm 10.30.3。
+## Capabilities
 
-```powershell
+| Area | What the harness does | Boundary / evidence |
+| --- | --- | --- |
+| Coding tools | File reads, search, patch edits, shell commands, test commands, and Git diffs | Local shell is trusted execution; file checks are not a general OS sandbox |
+| Shared workspace | CLI, terminal, Web, workspace selection, and independent chats | One writer per workspace; UI uses HTTP/SSE and receives no model secrets |
+| Persistent goals | Plans, checkpoints, dependencies, pause/resume, and versioned acceptance | Uncertain write effects must be reconciled before recovery |
+| Model and budget | A single allowed free ERNIE route; account for retries and auxiliary requests | No paid or alternate-model fallback; free quota and availability can vary |
+| Context | Separate active usage, advertised limits, estimates, and compaction | An estimated token count is not a provider measurement |
+| Learning | Attributed memory candidates, scoped retrieval, reflection and curation modules | Integration in progress; no demonstrated cross-task learning benefit yet |
+| Extensions | AGENTS/skills discovery, MCP configuration and trusted plugin interfaces | New modules are being integrated; source interfaces and tests define support |
+| Improvement | Candidate search, isolated repositories, evaluation records and archives | Promotion requires evidence and policy gates; no automatic performance claim |
+| Evaluation | Recorded development/formal protocols and an evidence viewer | A manifest or simulated result is not a completed live trial |
+
+## Quick start
+
+Use **Node.js 24.9+** and **pnpm 10.30.3** on Windows or Linux. You need OpenRouter access to the designated free route for actual model use.
+
+```sh
+git clone https://github.com/Luminousyyh/ernie-harness.git
+cd ernie-harness
 pnpm install --frozen-lockfile
 pnpm build
 pnpm cli setup
 pnpm cli open
 ```
 
-`setup` 隐藏输入模型凭据，在 Windows 使用当前用户 DPAPI 保存；Linux 私有凭据文件为600权限。也可通过环境变量 OPENROUTER_API_KEY 提供。真实密钥不进入浏览器。
+`setup` accepts credentials with hidden input. Windows stores them with the current user's DPAPI; Linux uses a private credential file. You may instead provide `OPENROUTER_API_KEY` through your runtime environment. Never put a real key in a committed config, command transcript, screenshot, or browser page.
 
-`pnpm cli open`（或双击 start-ernie.cmd）会启动或复用后台服务并打开已认证工作台；`pnpm cli serve --open` 用于前台运行服务。
+`open` starts or reuses the local service and opens the authenticated workspace. On Windows, `start-ernie.cmd` is another entry point. Use `pnpm cli serve --open` for a foreground service. The service defaults to `127.0.0.1:4317`; its local launch token is separate from the model credential. Keep the authenticated launch URL local.
 
-本地服务默认仅监听127.0.0.1:4317。终端打印带本地服务令牌的启动地址；这不是模型密钥。启动地址仅限本机使用。
+## Work with a project
 
-```powershell
-pnpm cli tui -w D:\your-project
-pnpm cli run "修复问题并保留现有行为" -w D:\your-project -c "pnpm test" --supervised
-pnpm cli run "检查仓库并列出改进建议" -w D:\your-project --background
-pnpm cli list
+The examples below use a Windows-style project path; on Linux substitute an absolute path such as `/home/you/projects/my-app`.
+
+```sh
+pnpm cli workspace add "D:/projects/my-app" --name "my-app"
 pnpm cli workspace list
-pnpm cli workspace add "D:\your-project" --name "我的项目"
-pnpm cli workspace select <工作区ID>
-pnpm cli reply <目标ID> "继续完善错误处理"
-pnpm cli show <目标ID>
-pnpm cli pause <目标ID>
-pnpm cli resume <目标ID>
-pnpm cli cancel <目标ID>
+pnpm cli workspace select <workspace-id>
+pnpm cli tui -w "D:/projects/my-app"
+pnpm cli run "Fix the empty-array edge case and add a regression test" -w "D:/projects/my-app" -c "pnpm test" --supervised
+pnpm cli list
+pnpm cli show <goal-id>
+pnpm cli reply <goal-id> "Add error handling"
+pnpm cli pause <goal-id>
+pnpm cli resume <goal-id>
+pnpm cli cancel <goal-id>
 pnpm cli doctor
 ```
 
-工作台侧栏可以添加、选择、编辑工作区，并在每个目录内新建独立对话。工作区选择会跨重启保存；修改目录不会移动已有对话。没有显式指定 `-w` 的 CLI 新目标使用当前选中工作区。继续对话保留记录和累计执行预算，并递增目标版本。
+Supervised goals need a concrete acceptance command. New CLI goals without `-w` use the selected workspace. Continuing a chat keeps its history and cumulative budget and advances its goal revision. Closing the interface does not cancel a background goal. Service exit pauses work; recovery reconciles unfinished tool records before resuming. [Read the usage and recovery guide](docs/user/guide.md).
 
-关闭界面不会取消后台目标。服务退出会暂停工作；重新启动后先核对未完成工具记录，再恢复。结果无法确认的副作用需要在 Web 中说明核对结果，避免重复写入。
+## Architecture
 
-## 当前边界
+```text
+CLI / terminal / Web
+        │ HTTP + SSE
+        ▼
+Server ── Engine ── Supervisor
+             │             │
+       Project tools   isolated worktrees
+             │             │
+         SQLite journal + budgets
+             │
+      OpenRouter → designated free Baidu route
+```
 
-只允许 `baidu/ernie-5.5-flash-preview:free`，固定 Baidu 提供商、high推理和零价路由，不自动切换模型或付费端点。免费额度不足时停止新请求并保留状态。标题等辅助调用如发生，同样占用预算。
+[Contracts](src/contracts) describe shared data without importing implementations. [Core](src/core), [store](src/store), and [supervisor](src/supervisor) own execution, durable state, and scheduling. [Provider](src/provider) owns model access. [Extensions](src/extensions), [learning](src/learning), and [improvement](src/improvement) add bounded mechanisms around that core. [Architecture and trust boundaries](docs/user/architecture.md) explain the ownership rules.
 
-本机 Shell 是可信本地执行，文件工具检查工作区边界，但不宣称隔离任意同用户代码。远程正式评测使用独立用户态运行环境和 Bubblewrap；沙箱不得访问真实密钥、隐藏测试和其他试验的产物。
+Only `baidu/ernie-5.5-flash-preview:free` is allowed, with the configured Baidu zero-price route and `high` reasoning. A configured effort level is not evidence of current route availability. Auxiliary, title, reflection, improvement, and retry calls count toward the same applicable budgets. Quota exhaustion stops new requests and preserves state.
 
-默认目标累计上限：20模型请求、200万输入token、12.8万输出token（含推理）、30分钟活动时间；每次最多16384输出token。请求前持久化保守预留，异常或中断不会抹掉累计消耗。监督目标必须有明确验收命令。
+Default cumulative limits are 20 model requests, 2,000,000 input tokens, 128,000 output tokens including reasoning, and 30 minutes of active time, with at most 16,384 output tokens per request. Conservative reservations persist before dispatch; errors and interruptions do not erase usage.
 
-## 验证与实验
+## Learning and improvement
 
-```powershell
+[ACE](https://arxiv.org/abs/2510.04618) and [Reflexion](https://arxiv.org/abs/2303.11366) inform experience extraction, scoped retrieval, verbal reflection, and curation. Meta / MESH / [SICA](https://arxiv.org/abs/2504.15228) / Hyperagents inform the separation of task execution from improvement proposals, isolated candidates, evaluation, and reversible decisions. These are mechanism inspirations, not a claim to reproduce every research system.
+
+```text
+Attributed task evidence → memory or patch candidate
+    → bounded retrieval / isolated validation
+    → independent acceptance → promotion or retained candidate
+```
+
+Memory is advice, never higher-priority instructions. A model's reflection is not acceptance evidence. Formal evaluation must not retrieve held-out solutions, hidden tests, or production learning artifacts. Patch promotion needs a current candidate revision, test evidence, protection checks, and the required review. [Source-to-mechanism mapping and citations](docs/research/harness-learning.md) distinguish existing modules from pending integration and live evidence.
+
+## Extensions
+
+The evolving extension layer has separate contracts for skill context, MCP tools, and trusted in-process plugins. MCP credentials are referenced by runtime environment variable names rather than stored values. Plugin code is trusted code, not a sandbox. Extension output and instructions remain attributed and cannot change the model policy or bypass approval boundaries.
+
+Start with the [extension tutorial](docs/user/extensions.md): a small plugin example, the actual configuration shape, a source tool extension path, and behavior checks. Integration and live interoperability still need their own evidence; the presence of a config file alone does not prove a connection.
+
+## Verification and evidence
+
+```sh
 pnpm typecheck
 pnpm test
 pnpm build
+node scripts/site-build.mjs --check
+pnpm site:qa
 ```
 
-真实模型验证见 docs/LIVE_VALIDATION.md。评测协议与环境记录见 docs/evaluation.md。144次正式比较只有外部验收证据齐全后才算完成；manifest、空队列和模拟测试不能作为模型表现。Web 实验页面显示实际运行状态。
+[Windows/Linux CI](.github/workflows/checks.yml) runs offline type, behavior, build, website, and packaging metadata checks. Its definition is not a pass record; inspect the run for the commit. Browser QA checks both languages, five widths, language anchors, no-JavaScript readability, keyboard operation, pointer/focus reveal guards, motion preferences, and local-only site requests. Install Chromium with `pnpm exec playwright install chromium`, or set `ERNIE_BROWSER` to a browser executable. Windows QA can use installed Edge.
 
-## 设计来源
+[Live validation notes](docs/LIVE_VALIDATION.md), [evaluation protocol](docs/evaluation.md), and [evaluation directory](eval/README.md) document separate evidence. The 144-trial formal comparison is incomplete until external acceptance evidence is collected. Historic smoke/development snapshots do not establish a harness ranking or verify the newly integrated mechanisms. No live model call is required for website QA.
 
-重点参考 DeepSeek Harness 的可替换服务、DSH Super-Agent 的持久状态机，以及 Pi 的终端与程序化交互。项目内核独立实现，参考版本、来源和限制见 docs/research。原始 ERNIE 标志由用户提供，界面使用依据其几何结构重绘的矢量资源，不表示官方产品。Super-Agent 状态与恢复说明见 docs/SUPER_AGENT.md。
+## Documentation and roadmap
 
+- [Chinese site](https://luminousyyh.github.io/ernie-harness/) · [English site](https://luminousyyh.github.io/ernie-harness/en/)
+- [Usage](docs/user/guide.md) · [Architecture](docs/user/architecture.md) · [Extensions](docs/user/extensions.md)
+- [Learning sources and implementation](docs/research/harness-learning.md) · [Maturity gates](docs/maturity.md) · [Changelog](docs/CHANGELOG.md)
+- Next: complete integration, verify Windows/Linux behavior, collect authorized live learning and recovery evidence, complete independent comparison, and record real product workflows after review.
 
-远程实验状态可同步到 Web 的“实验”页：`python scripts/sync-evaluation.py` 获取一次快照，或加 `--watch` 每60秒读取现有队列。需要本地 Python 与 Paramiko；SSH 凭据通过隐藏输入或运行时环境变量提供，页面只接收允许公开的统计与逐项记录。该同步进程不创建试验、不调用模型，也不把 pending 记录计作完成。同步时间显示在页面中，SSH 断开期间保留最近成功快照。
+## Contributing and license
 
+Read [Contributing](.github/CONTRIBUTING.md). Keep changes focused, preserve workspace ownership, include appropriate behavior checks, and report live evidence separately. Runtime databases, credentials, dependency caches, full traces, and deployment archives do not belong in source control. Remote paths in experiment documents describe the author's environment and need local reconfiguration.
 
-## 仓库内容与运行数据
+Original project code is [MIT licensed](LICENSE). Third-party materials retain their own licenses; MIT does not grant rights to third-party marks. ERNIE Harness is independent and unaffiliated with Baidu, DeepSeek, Pi, or Anthropic.
 
-仓库包含内核、Web/终端界面、测试、部署和评测源码、设计文档及带许可证的上游研究参考。模型凭据、SSH/GitHub 凭据、会话数据库、依赖缓存、完整运行轨迹和部署压缩包仅保存在运行环境，不提交 Git。首次运行应按启动步骤配置自己的模型凭据。
-
-[评测目录说明](eval/README.md) 区分可复现源码、经检查的进度摘要和运行时生成的证据；文档中的远程路径对应作者的实验环境，需要在自己的服务器上重新配置。正式比较仍在进行，已有冒烟或开发结果不代表三方性能结论。
-
-
-## 开源协议与展示网站
-
-项目原创代码采用 [MIT License](LICENSE)。第三方参考材料保留各自许可；MIT 不授予第三方商标、名称或标识的使用权。项目与百度、DeepSeek、Pi 或 Anthropic 无隶属关系。
-
-展示站是 `docs/` 下的独立静态页面，由 GitHub Pages 从 `main:/docs` 发布，无模型调用或访客追踪。`pnpm site:preview` 本地预览；`pnpm site:qa` 检查浏览器交互并生成截图。预览界面使用标注的演示数据，评测结果引用带日期的快照。
-
-网站浏览器检查会优先使用 Windows 上的 Edge；其他环境先运行 `pnpm exec playwright install chromium`，或通过 `ERNIE_BROWSER` 指定浏览器可执行文件。
+The README's information order was inspired by [wangmiaozero/pi-harness at `ab32e788f56afdb9367c3a1a6b33a19e5d0058cd`](https://github.com/wangmiaozero/pi-harness/tree/ab32e788f56afdb9367c3a1a6b33a19e5d0058cd): centered identity, capability overview, quick start, architecture, and contribution links. Text, code, and SVG illustrations here are independently authored; no AGPL implementation or upstream performance claim was copied. See [source attribution](docs/user/sources.md) and the existing [third-party notices](docs/THIRD_PARTY.md).

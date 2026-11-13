@@ -15,7 +15,10 @@ export async function revealForScreenshot(page) {
   while (top < await page.evaluate(() => document.documentElement.scrollHeight)) {
     await page.evaluate(y => window.scrollTo({top:y,behavior:'instant'}), top);
     await page.waitForFunction(() => [...document.querySelectorAll('[data-reveal]')].filter(element => {
-      const bounds=element.getBoundingClientRect(); return bounds.top<innerHeight-48 && bounds.bottom>0;
+      const bounds=element.getBoundingClientRect();
+      // Match the observer's 8% threshold, not just a one-pixel viewport overlap.
+      const visible=Math.max(0,Math.min(bounds.bottom,innerHeight-48)-Math.max(bounds.top,0));
+      return visible / Math.max(1,bounds.height) >= .08;
     }).every(element => !element.classList.contains('reveal-pending') && getComputedStyle(element).opacity==='1'));
     top += step;
   }

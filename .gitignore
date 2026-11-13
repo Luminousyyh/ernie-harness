@@ -38,3 +38,8 @@ eval/*
 !eval/observability-v2-native-event-samples-20261113.json
 eval/references/*.tar.gz
 eval/references/*.tgz
+
+# Browser QA outputs and implementation inventories are local artifacts.
+web/qa-artifacts/
+web/qa-maturation/
+web/.locale-*

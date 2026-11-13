@@ -1,0 +1,22 @@
+{
+  "enabled": false,
+  "timeoutMs": 30000,
+  "skillRoots": [],
+  "mcpServers": [
+    {
+      "id": "local-fixture",
+      "enabled": false,
+      "transport": "stdio",
+      "command": "node",
+      "args": ["examples/extensions/mcp-fixture.mjs"]
+    }
+  ],
+  "plugins": [
+    {
+      "id": "example",
+      "path": "examples/extensions/example-plugin.mjs",
+      "enabled": false,
+      "trusted": false
+    }
+  ]
+}
