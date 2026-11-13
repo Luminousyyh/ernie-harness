@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://luminousyyh.github.io/ernie-harness/sitemap.xml

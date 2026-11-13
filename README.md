@@ -1,5 +1,7 @@
 # ERNIE Harness
 
+[项目网站](https://luminousyyh.github.io/ernie-harness/) · [MIT 许可证](LICENSE) · [设计与来源](docs/THIRD_PARTY.md)
+
 面向 ERNIE 5.5 Flash Preview 的编程工作台：终端、Web 和后台目标共用同一执行内核。
 
 独立研究与开发项目，与百度、DeepSeek、Pi 或 Anthropic 无隶属关系，也未获得其官方背书。上游参考来源和许可证见 [第三方说明](docs/THIRD_PARTY.md)。
@@ -72,3 +74,12 @@ pnpm build
 仓库包含内核、Web/终端界面、测试、部署和评测源码、设计文档及带许可证的上游研究参考。模型凭据、SSH/GitHub 凭据、会话数据库、依赖缓存、完整运行轨迹和部署压缩包仅保存在运行环境，不提交 Git。首次运行应按启动步骤配置自己的模型凭据。
 
 [评测目录说明](eval/README.md) 区分可复现源码、经检查的进度摘要和运行时生成的证据；文档中的远程路径对应作者的实验环境，需要在自己的服务器上重新配置。正式比较仍在进行，已有冒烟或开发结果不代表三方性能结论。
+
+
+## 开源协议与展示网站
+
+项目原创代码采用 [MIT License](LICENSE)。第三方参考材料保留各自许可；MIT 不授予第三方商标、名称或标识的使用权。项目与百度、DeepSeek、Pi 或 Anthropic 无隶属关系。
+
+展示站是 `docs/` 下的独立静态页面，由 GitHub Pages 从 `main:/docs` 发布，无模型调用或访客追踪。`pnpm site:preview` 本地预览；`pnpm site:qa` 检查浏览器交互并生成截图。预览界面使用标注的演示数据，评测结果引用带日期的快照。
+
+网站浏览器检查会优先使用 Windows 上的 Edge；其他环境先运行 `pnpm exec playwright install chromium`，或通过 `ERNIE_BROWSER` 指定浏览器可执行文件。

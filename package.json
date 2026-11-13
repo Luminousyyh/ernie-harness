@@ -18,7 +18,10 @@
     "check": "pnpm typecheck && pnpm test && pnpm build",
     "benchmark:agent": "tsx src/cli/headless.ts",
     "broker": "tsx src/broker/main.ts",
-    "benchmark:runner": "tsx src/benchmark/runner.ts"
+    "benchmark:runner": "tsx src/benchmark/runner.ts",
+    "site:preview": "node scripts/site-preview.mjs",
+    "site:qa": "node scripts/site-qa.mjs",
+    "site:social": "node scripts/site-social.mjs"
   },
   "dependencies": {
     "fastify": "5.12.8",
@@ -43,5 +46,6 @@
     "tailwindcss": "4.3.5",
     "@tailwindcss/vite": "4.3.5",
     "@playwright/test": "1.65.0"
-  }
+  },
+  "license": "MIT"
 }
