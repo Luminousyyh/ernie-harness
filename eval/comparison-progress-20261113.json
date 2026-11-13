@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-13T13:19:30.464771+08:00",
+  "operation": "read-only progress, source and evidence audit; no model dispatch or rescoring",
+  "status": {
+    "state": "waiting-quota",
+    "launchedThisProcess": 2,
+    "updatedAt": "2026-11-13T05:19:18.261Z",
+    "remaining": 10,
+    "reservedPerTrial": 20,
+    "reservedRequests": 0,
+    "retryAt": "2026-11-14T00:00:00.000Z"
+  },
+  "model": "baidu/ernie-5.5-flash-preview:free",
+  "phases": {
+    "development": {
+      "planned": 18,
+      "counts": {
+        "unresolved": 1,
+        "resolved": 1,
+        "pending": 16
+      },
+      "usage": {
+        "calls": 40,
+        "inputTokens": 325997,
+        "outputTokens": 2798,
+        "activeMs": 160364
+      },
+      "exportMatchesDatabase": true
+    },
+    "formal": {
+      "planned": 144,
+      "counts": {
+        "pending": 144
+      },
+      "usage": {
+        "calls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "activeMs": 0
+      },
+      "exportMatchesDatabase": true
+    }
+  },
+  "completedTrials": [
+    {
+      "id": "dev-7af8781c8513bf5b2bdd2b97efd3053b998f44ef",
+      "instanceId": "django__django-17029",
+      "harness": "ernie",
+      "contextLimit": 256000,
+      "status": "unresolved",
+      "usage": {
+        "calls": 20,
+        "inputTokens": 175906,
+        "outputTokens": 1016,
+        "activeMs": 103247
+      },
+      "agentExitCode": 1,
+      "agentStopEvents": [
+        {
+          "status": "failed",
+          "error": "已达到本次目标的累计执行预算"
+        }
+      ],
+      "externalTestExitCode": 1,
+      "evaluatorProcessExitCode": 0,
+      "environmentDigest": "3f84555bc788fbb8bc16db5eca8dd35e76338f177ba1374d5b3237e52d60efce",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceSha256": "5ea2b4f339424f4d1f47ddd3192e0dba25b3030149b5832be77233a5071c253f",
+      "observationReceiptSha256": "2fbaf4514d98ae25741cc2b6157bfd179e1a96ed2b9e754a693ac2fa9a13e17a",
+      "providerComplete": true,
+      "toolCalls": 27,
+      "toolFailures": 2,
+      "checkedTrajectoryFiles": 42,
+      "requests": 20,
+      "responses": 20,
+      "errors": []
+    },
+    {
+      "id": "dev-15dfeda0c2a624d5949503dc7e0fe6df051b868e",
+      "instanceId": "django__django-17029",
+      "harness": "ernie",
+      "contextLimit": 128000,
+      "status": "resolved",
+      "usage": {
+        "calls": 20,
+        "inputTokens": 150091,
+        "outputTokens": 1782,
+        "activeMs": 57117
+      },
+      "agentExitCode": 1,
+      "agentStopEvents": [
+        {
+          "status": "failed",
+          "error": "已达到本次目标的累计执行预算"
+        }
+      ],
+      "externalTestExitCode": 0,
+      "evaluatorProcessExitCode": 0,
+      "environmentDigest": "3f84555bc788fbb8bc16db5eca8dd35e76338f177ba1374d5b3237e52d60efce",
+      "patchSha256": "b32925ed09d4cf39b59dd9a2fafcf7453eb898bda5d903b272abb44f2081daf8",
+      "evidenceSha256": "07ae6bedb1ce0e628e641bc81befec115e488ad68135f4d7b75e5a718bd4a967",
+      "observationReceiptSha256": "42a765ba313a44a2e8666fc632ae546656d6452348fff82b01785e2159185eac",
+      "providerComplete": true,
+      "toolCalls": 25,
+      "toolFailures": 0,
+      "checkedTrajectoryFiles": 42,
+      "requests": 20,
+      "responses": 20,
+      "errors": []
+    }
+  ],
+  "failures": [],
+  "frozenArtifacts": {
+    "artifactSetSha256": "25fcc34dae5c77a9a8de7065072d50f7001bdf0e5c702b1a6f2f617f416a59ae",
+    "checkedFiles": 3717,
+    "changedOrMissing": []
+  },
+  "openRouterAccount": {
+    "httpStatus": 200,
+    "isFreeTier": true,
+    "freeModelDailyRequests": {
+      "used": 40,
+      "limit": 50,
+      "remaining": 10
+    },
+    "usageDailyDollars": 0
+  },
+  "privacy": {
+    "actualCredentialFoundInTrajectoryFiles": false,
+    "checkedFiles": 88
+  },
+  "worker": {
+    "pid": 739170,
+    "alive": true,
+    "cpuAffinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "tmux": [
+      "ernie-evaluation 739170 node 0",
+      "ernie-model-broker 245833 bash 0"
+    ],
+    "integrationHoldExists": false,
+    "resourceGuardAvailable": true
+  },
+  "quotaLedger": {
+    "sha256Before": "ed012989303aa02c84f5394b72fc19a4dbf0a3134439d0e76f230636436effdf",
+    "sha256After": "ed012989303aa02c84f5394b72fc19a4dbf0a3134439d0e76f230636436effdf",
+    "todayDispatchCount": 40,
+    "unchangedDuringAudit": true
+  },
+  "modelCallsAddedByAudit": 0,
+  "passed": true
+}

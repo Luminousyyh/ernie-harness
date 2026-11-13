@@ -1,0 +1,32 @@
+[
+  {
+    "project": "deepseek-ai/dsh-superagent-prototype",
+    "revision": "8c32a9dc5d72c033816c6a8110b37f40cf94fba4",
+    "licenseSource": "https://raw.githubusercontent.com/deepseek-ai/dsh-superagent-prototype/8c32a9dc5d72c033816c6a8110b37f40cf94fba4/LICENSE",
+    "licenseFile": "LICENSE.dsh-superagent-prototype",
+    "sha256": "6d66f91815b720e18cfb2b3552043a0359236aec9a1a6917787900546f6ce550"
+  },
+  {
+    "project": "SWE-bench/SWE-bench",
+    "revision": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+    "licenseSource": "https://raw.githubusercontent.com/SWE-bench/SWE-bench/02e7a74ffd0b707aab73d203fe87bdc7c76afc8e/LICENSE",
+    "licenseFile": "LICENSE.swe-bench",
+    "sha256": "2bd2e08df7147f67a69b42c10efae09bd4bf119df397371036187d5dd1b02f57"
+  },
+  {
+    "project": "deepseek-ai/deepseek-harness",
+    "revision": "e8f7b93a344964de3dca1ace9e72b6e4d6de87cb",
+    "licenseSource": "https://raw.githubusercontent.com/deepseek-ai/deepseek-harness/e8f7b93a344964de3dca1ace9e72b6e4d6de87cb/LICENSE",
+    "licenseFile": "LICENSE.deepseek-harness",
+    "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+    "retrievedFrom": "pinned baseline checkout; .source-pin.json verified"
+  },
+  {
+    "project": "badlogic/pi-mono",
+    "revision": "b22e525b325ff1934b4110f7fc60426fd6f0a8f3",
+    "licenseSource": "https://raw.githubusercontent.com/badlogic/pi-mono/b22e525b325ff1934b4110f7fc60426fd6f0a8f3/LICENSE",
+    "licenseFile": "LICENSE.pi-mono",
+    "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48",
+    "retrievedFrom": "pinned baseline checkout; .source-pin.json verified"
+  }
+]

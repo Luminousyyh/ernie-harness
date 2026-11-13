@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "provenance": "actual sanitized native events from the authorized 8-call non-SWE diagnostic",
+  "samples": {
+    "ernie": [
+      {
+        "seq": 10,
+        "goalId": "e8efa4a5-134c-452e-9a25-323fc952c5dc",
+        "type": "tool.started",
+        "data": {
+          "id": "8a02d67d-ad8f-44ed-b3dc-7a06201bf3ba",
+          "name": "read_file",
+          "args": {
+            "path": "missing-demo.txt"
+          }
+        },
+        "createdAt": "2026-11-12T21:51:07.371Z"
+      },
+      {
+        "seq": 11,
+        "goalId": "e8efa4a5-134c-452e-9a25-323fc952c5dc",
+        "type": "tool.completed",
+        "data": {
+          "id": "8a02d67d-ad8f-44ed-b3dc-7a06201bf3ba",
+          "name": "read_file",
+          "result": {
+            "ok": false,
+            "output": "ENOENT: no such file or directory, open '/workspace/missing-demo.txt'",
+            "truncated": false
+          }
+        },
+        "createdAt": "2026-11-12T21:51:07.403Z"
+      },
+      {
+        "seq": 23,
+        "goalId": "e8efa4a5-134c-452e-9a25-323fc952c5dc",
+        "type": "tool.started",
+        "data": {
+          "id": "75f943ef-6c2e-4bb9-8763-c4cf453fd4fa",
+          "name": "read_file",
+          "args": {
+            "path": "hello.txt"
+          }
+        },
+        "createdAt": "2026-11-12T21:51:13.666Z"
+      },
+      {
+        "seq": 24,
+        "goalId": "e8efa4a5-134c-452e-9a25-323fc952c5dc",
+        "type": "tool.completed",
+        "data": {
+          "id": "75f943ef-6c2e-4bb9-8763-c4cf453fd4fa",
+          "name": "read_file",
+          "result": {
+            "ok": true,
+            "output": "V2_NATIVE_TELEMETRY_OK\n",
+            "truncated": false
+          }
+        },
+        "createdAt": "2026-11-12T21:51:13.802Z"
+      }
+    ],
+    "pi": [
+      {
+        "type": "tool_execution_start",
+        "toolCallId": "call_94499361a0c942e48970557a",
+        "toolName": "read",
+        "args": {
+          "path": "/workspace/missing-demo.txt"
+        }
+      },
+      {
+        "type": "tool_execution_start",
+        "toolCallId": "call_c6b65f24c5df4101b18a5c10",
+        "toolName": "read",
+        "args": {
+          "path": "/workspace/hello.txt"
+        }
+      },
+      {
+        "type": "tool_execution_end",
+        "toolCallId": "call_94499361a0c942e48970557a",
+        "toolName": "read",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "ENOENT: no such file or directory, access '/workspace/missing-demo.txt'"
+            }
+          ],
+          "details": {}
+        },
+        "isError": true,
+        "durationMs": 4
+      },
+      {
+        "type": "tool_execution_end",
+        "toolCallId": "call_c6b65f24c5df4101b18a5c10",
+        "toolName": "read",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "V2_NATIVE_TELEMETRY_OK\n"
+            }
+          ],
+          "structuredContent": "V2_NATIVE_TELEMETRY_OK\n"
+        },
+        "isError": false,
+        "durationMs": 10
+      }
+    ],
+    "dsh": [
+      {
+        "type": "tool_call",
+        "callId": "call_74fba6ce96174cda9bb7a1a0",
+        "tool": "read",
+        "input": {
+          "file_path": "missing-demo.txt"
+        }
+      },
+      {
+        "type": "tool_call",
+        "callId": "call_703fdfa11f304495be24b4c9",
+        "tool": "read",
+        "input": {
+          "file_path": "hello.txt"
+        }
+      },
+      {
+        "type": "tool_result",
+        "callId": "call_74fba6ce96174cda9bb7a1a0",
+        "status": "error",
+        "result": "Error: cannot read \"/workspace/missing-demo.txt\": not found",
+        "error": {
+          "name": "FsError",
+          "code": "FS_NOT_FOUND"
+        }
+      },
+      {
+        "type": "tool_result",
+        "callId": "call_703fdfa11f304495be24b4c9",
+        "status": "completed",
+        "result": "<path>/workspace/hello.txt</path>\n<type>file</type>\n<content>\n1: V2_NATIVE_TELEMETRY_OK\n\n(End of file - total 1 lines)\n</content>"
+      }
+    ]
+  }
+}

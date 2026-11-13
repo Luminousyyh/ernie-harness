@@ -1,0 +1,3 @@
+import{expect,it}from'vitest';import{assertObservableModelTrial}from'../src/benchmark/runner.js';
+it('does not permit a proxy rejection with no completed model response to become a model score',()=>{expect(()=>assertObservableModelTrial('running',{attempts:[{status:'rejected'}]},true)).toThrow('No completed');expect(()=>assertObservableModelTrial('needs-reconciliation',{attempts:[{status:'uncertain'}]},false)).not.toThrow();});
+it('requires retained provider evidence before allowing a completed response to be scored',()=>{expect(()=>assertObservableModelTrial('running',{attempts:[{status:'completed'}]},false)).toThrow('incomplete trajectory');expect(()=>assertObservableModelTrial('running',{attempts:[{status:'completed'}]},true)).not.toThrow();});

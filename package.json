@@ -1,0 +1,47 @@
+{
+  "name": "ernie-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.9.0"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "dev": "tsx src/cli/main.ts serve",
+    "start": "node dist/cli/main.js serve",
+    "cli": "tsx src/cli/main.ts",
+    "build": "tsc -p tsconfig.json && tsc -p web/tsconfig.json --noEmit && vite build --config web/vite.config.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p web/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:e2e": "node scripts/browser-qa.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm build",
+    "benchmark:agent": "tsx src/cli/headless.ts",
+    "broker": "tsx src/broker/main.ts",
+    "benchmark:runner": "tsx src/benchmark/runner.ts"
+  },
+  "dependencies": {
+    "fastify": "5.12.8",
+    "@fastify/static": "10.1.10",
+    "@fastify/cookie": "11.1.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "ink": "8.0.0",
+    "ink-text-input": "6.0.0",
+    "zod": "4.6.7",
+    "typescript": "7.0.2",
+    "lucide-react": "1.72.0"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15",
+    "vitest": "5.1.0",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "vite": "8.3.8",
+    "@vitejs/plugin-react": "6.3.0",
+    "tailwindcss": "4.3.5",
+    "@tailwindcss/vite": "4.3.5",
+    "@playwright/test": "1.65.0"
+  }
+}

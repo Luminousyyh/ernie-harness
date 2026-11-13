@@ -1,0 +1,40 @@
+node_modules/
+dist/
+web/dist/
+.env*
+!.env.example
+.ernie/
+artifacts/
+.cache/
+playwright-report/
+test-results/
+*.db*
+*.log
+__pycache__/
+*.pyc
+
+# Downloaded upstream reference archives are runtime cache, not source.
+eval/references/*.tar.gz
+eval/references/*.tgz
+
+# Local credentials and machine configuration.
+*.key
+*.pem
+*.p12
+*.pfx
+*.dpapi
+*.sqlite*
+.ssh/
+config/
+
+# Publish evaluation sources/references and reviewed progress summaries.
+# Raw runs, traces, deployment bundles and private evaluation state stay local.
+eval/*
+!eval/*.py
+!eval/references/
+!eval/README.md
+!eval/comparison-progress-*.md
+!eval/comparison-progress-*.json
+!eval/observability-v2-native-event-samples-20261113.json
+eval/references/*.tar.gz
+eval/references/*.tgz

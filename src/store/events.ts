@@ -1,0 +1,2 @@
+import type {EventBus,HarnessEvent} from '../contracts/index.js';
+export class LocalEventBus implements EventBus {private listeners=new Set<(event:HarnessEvent)=>void>();publish(event:HarnessEvent){for(const listener of this.listeners){try{listener(event);}catch{/* A disconnected client cannot roll back an event. */}}}subscribe(listener:(event:HarnessEvent)=>void){this.listeners.add(listener);return()=>{this.listeners.delete(listener);};}}
